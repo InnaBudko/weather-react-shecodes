@@ -1,13 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.js";
+import Footer from "./Footer";
+import Search from "./Search";
+import WeatherForecast from "./WeatherForecast";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <div className="container">
+      <div className="weather-app-wrapper">
+        <div className="weather-app">
+          <Search />
+          <WeatherForecast />
+        </div>
+        <Footer />
+      </div>
+    </div>
   </React.StrictMode>
 );
 
