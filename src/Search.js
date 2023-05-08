@@ -140,8 +140,7 @@ export default function Search() {
     return (
       <div className="search-form">
         {form}
-        <br />
-        <div className="search-result">Please enter a city</div>
+        <div className="search-result text-center">Please enter a city</div>
       </div>
     );
   }
