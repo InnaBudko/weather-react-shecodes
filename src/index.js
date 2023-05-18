@@ -14,7 +14,7 @@ root.render(
     <div className="container">
       <div className="weather-app-wrapper">
         <div className="weather-app">
-          <Search />
+          <Search defaultCity="New York" />
           <WeatherForecast />
         </div>
         <Footer />

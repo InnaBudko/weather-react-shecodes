@@ -1,25 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
+import WeatherCurrentDate from "./WeatherCurrentDate";
 
-export default function Search() {
-  let [city, setCity] = useState(``);
-  let [temperature, setTemperature] = useState(null);
-  let [description, setDescription] = useState(null);
-  let [humidity, setHumidity] = useState(null);
-  let [wind, setWind] = useState(null);
-  let [icon, setIcon] = useState(null);
-  let [cityFound, setCityFound] = useState(null);
-  let [state, setState] = useState(false);
+export default function Search(props) {
+  let [city, setCity] = useState(props.defaultCity);
+  let [weatherData, setWeatherData] = useState({});
 
-  function setForecastCelsius(response) {
-    setState(true);
-    setTemperature(response.data.temperature.current);
-    setDescription(response.data.condition.description);
-    setHumidity(response.data.temperature.humidity);
-    setWind(response.data.wind.speed);
-    setIcon(response.data.condition.icon_url);
-    setCityFound(response.data.city);
-    console.log(response);
+  let [found, setFound] = useState(false);
+  let [error, setError] = useState(null);
+
+  function getWeatherDataDay(response) {
+    setWeatherData({
+      temperature: response.data.temperature.current,
+      description: response.data.condition.description,
+      humidity: response.data.temperature.humidity,
+      wind: response.data.wind.speed,
+      icon: response.data.condition.icon_url,
+      cityFound: response.data.city,
+      date: response.data.time,
+    });
+
+    setFound(true);
+    console.log(response.data);
+  }
+
+  function handleSubmitError() {
+    setError(`Sorry, we did not find ${city}`);
   }
 
   function handleSubmit(event) {
@@ -29,16 +35,17 @@ export default function Search() {
       let endpoint = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
       axios
         .get(endpoint)
-        .then(setForecastCelsius)
+        .then(getWeatherDataDay)
         .catch(function (error) {
           console.log(error);
-          alert(`Sorry, we did not find ${city}`);
-          setState(false);
+          handleSubmitError();
+          setFound(false);
         });
 
       setCity(``);
+      setError(``);
     } else {
-      setState(false);
+      setFound(false);
     }
   }
 
@@ -71,6 +78,7 @@ export default function Search() {
               type="button"
               className="btn btn-primary"
               id="search-button"
+              onClick={handleSubmit}
             >
               search
             </button>
@@ -81,7 +89,7 @@ export default function Search() {
     </div>
   );
 
-  if (state) {
+  if (found) {
     return (
       <div className="search-form">
         {form}
@@ -91,9 +99,15 @@ export default function Search() {
           <div className="row mb-3 mt-2 current-weather-data">
             <div className="col-3 p-0 mr-5">
               <div className="d-flex align-items-start weather-temperature">
-                <img src={icon} alt={description} id="weather-icon" />
+                <img
+                  src={weatherData.icon}
+                  alt={weatherData.description}
+                  id="weather-icon"
+                />
                 <div>
-                  <strong id="temperature">{Math.round(temperature)}</strong>
+                  <strong id="temperature">
+                    {Math.round(weatherData.temperature)}
+                  </strong>
                   <span className="units">
                     <a href="/" className="active" id="celsius-link">
                       °C
@@ -109,10 +123,10 @@ export default function Search() {
             <div className="col-3 pl-2 pb-0 ml-5">
               <div className="weather-details">
                 <div>
-                  Humidity: <span id="humidity">{humidity}</span>%
+                  Humidity: <span id="humidity">{weatherData.humidity}</span>%
                 </div>
                 <div>
-                  Wind: <span id="wind">{wind}</span>
+                  Wind: <span id="wind">{weatherData.wind}</span>
                   <span id="wind-units"> km/h</span>
                 </div>
               </div>
@@ -120,15 +134,15 @@ export default function Search() {
             <div className="col">
               <div className="overview">
                 <div className="city" id="city">
-                  {cityFound}
+                  {weatherData.cityFound}
                 </div>
-                {/* <div>
-                  <span className="last-updated">Last updated: </span>
-                  {currentWeather.day}
-                  <span id="date-time"> {currentWeather.dateAndTime}</span>
-                </div> */}
+                <div>
+                  <span className="current-date">
+                    <WeatherCurrentDate date={weatherData.date} />
+                  </span>
+                </div>
                 <div className="description" id="description">
-                  {description}
+                  {weatherData.description}
                 </div>
               </div>
             </div>
@@ -141,6 +155,7 @@ export default function Search() {
       <div className="search-form">
         {form}
         <div className="search-result text-center">Please enter a city</div>
+        <div className="search-result text-center text-danger">{error}</div>
       </div>
     );
   }
