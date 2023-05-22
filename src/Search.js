@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import WeatherCurrentDate from "./WeatherCurrentDate";
+import TemperatureDay from "./TemperatureDay";
 
 export default function Search(props) {
   let [city, setCity] = useState(null);
@@ -109,18 +110,7 @@ export default function Search(props) {
                   id="weather-icon"
                 />
                 <div>
-                  <strong id="temperature">
-                    {Math.round(weatherData.temperature)}
-                  </strong>
-                  <span className="units">
-                    <a href="/" className="active" id="celsius-link">
-                      °C
-                    </a>
-                    |
-                    <a href="/" className="inactive" id="fahrenheit-link">
-                      °F
-                    </a>
-                  </span>
+                  <TemperatureDay temperature={weatherData.temperature} />
                 </div>
               </div>
             </div>
