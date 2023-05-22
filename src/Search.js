@@ -3,7 +3,7 @@ import axios from "axios";
 import WeatherCurrentDate from "./WeatherCurrentDate";
 
 export default function Search(props) {
-  let [city, setCity] = useState(props.defaultCity);
+  let [city, setCity] = useState(null);
   let [weatherData, setWeatherData] = useState({});
 
   let [found, setFound] = useState(false);
@@ -28,20 +28,24 @@ export default function Search(props) {
     setError(`Sorry, we did not find ${city}`);
   }
 
+  function makeApiCall(city) {
+    let apiKey = "95c40b01td464da65f4f835cof7b5c75";
+    let endpoint = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
+    axios
+      .get(endpoint)
+      .then(getWeatherDataDay)
+      .catch(function (error) {
+        console.log(error);
+        handleSubmitError();
+        setFound(false);
+      });
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
-    if (city.trim().length !== 0) {
-      let apiKey = "95c40b01td464da65f4f835cof7b5c75";
-      let endpoint = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
-      axios
-        .get(endpoint)
-        .then(getWeatherDataDay)
-        .catch(function (error) {
-          console.log(error);
-          handleSubmitError();
-          setFound(false);
-        });
 
+    if (city.trim().length !== 0) {
+      makeApiCall(city);
       setCity(``);
       setError(``);
     } else {
@@ -150,7 +154,7 @@ export default function Search(props) {
         </div>
       </div>
     );
-  } else {
+  } else if (!found && error != null) {
     return (
       <div className="search-form">
         {form}
@@ -158,5 +162,8 @@ export default function Search(props) {
         <div className="search-result text-center text-danger">{error}</div>
       </div>
     );
+  } else {
+    makeApiCall(props.defaultCity);
+    return <div className="search-form">loading...</div>;
   }
 }
