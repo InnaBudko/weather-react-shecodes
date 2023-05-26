@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import WeatherCurrentDate from "./WeatherCurrentDate";
 import TemperatureDay from "./TemperatureDay";
+import WeatherForecast from "./WeatherForecast";
 
 export default function Search(props) {
-  let [city, setCity] = useState(null);
+  let [city, setCity] = useState("");
   let [weatherData, setWeatherData] = useState({});
 
   let [found, setFound] = useState(false);
@@ -19,6 +20,7 @@ export default function Search(props) {
       icon: response.data.condition.icon_url,
       cityFound: response.data.city,
       date: response.data.time,
+      coordinates: response.data.coordinates,
     });
 
     setFound(true);
@@ -83,7 +85,7 @@ export default function Search(props) {
               type="button"
               className="btn btn-primary"
               id="search-button"
-              onClick={handleSubmit}
+              // onClick={handleSubmit}
             >
               search
             </button>
@@ -141,6 +143,7 @@ export default function Search(props) {
               </div>
             </div>
           </div>
+          <WeatherForecast coordinates={weatherData.coordinates} />
         </div>
       </div>
     );
