@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import WeatherForecastDay from "./WeatherForecastDay";
 
@@ -6,9 +6,26 @@ export default function WeatherForecast(props) {
   let [loaded, setLoaded] = useState(false);
   let [forecast, setForecast] = useState(null);
 
+  useEffect(() => {
+    setLoaded(false);
+  }, [props.coordinates]);
+
   function displayForecast(response) {
     setForecast(response.data.daily);
     setLoaded(true);
+  }
+
+  function makeApiCall() {
+    let apiKey = "95c40b01td464da65f4f835cof7b5c75";
+    let longitude = props.coordinates.longitude;
+    let latitude = props.coordinates.latitude;
+    let endpoint = `https://api.shecodes.io/weather/v1/forecast?lon=${longitude}&lat=${latitude}&key=${apiKey}&units=metric`;
+    axios
+      .get(endpoint)
+      .then(displayForecast)
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   if (loaded) {
@@ -24,6 +41,8 @@ export default function WeatherForecast(props) {
                     <WeatherForecastDay responseData={dailyForecast} />
                   </div>
                 );
+              } else {
+                return null;
               }
             })}
           </div>
@@ -31,16 +50,7 @@ export default function WeatherForecast(props) {
       </div>
     );
   } else {
-    let apiKey = "95c40b01td464da65f4f835cof7b5c75";
-    let longitude = props.coordinates.longitude;
-    let latitude = props.coordinates.latitude;
-    let endpoint = `https://api.shecodes.io/weather/v1/forecast?lon=${longitude}&lat=${latitude}&key=${apiKey}&units=metric`;
-    axios
-      .get(endpoint)
-      .then(displayForecast)
-      .catch(function (error) {
-        console.log(error);
-      });
+    makeApiCall();
     return null;
   }
 }

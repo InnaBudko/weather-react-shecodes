@@ -82,10 +82,9 @@ export default function Search(props) {
               onChange={updateCity}
             />
             <button
-              type="button"
+              type="submit"
               className="btn btn-primary"
               id="search-button"
-              // onClick={handleSubmit}
             >
               search
             </button>
