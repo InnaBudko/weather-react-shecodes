@@ -6,7 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
 import Footer from "./Footer";
 import Search from "./Search";
-import WeatherForecast from "./WeatherForecast";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
